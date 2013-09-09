@@ -29,12 +29,12 @@ class AuthLoginHandler(tornado.web.RequestHandler, tornado.auth.GoogleMixin):
         self.authenticate_redirect(ax_attrs=["name"])
         return
 
-		
+
 def singleton(cls):
     return cls("localhost","sails","root","root")
 
 
-@singleton		
+@singleton
 class DataAccessor:
 
     def __init__(self, host, dbName, user, password):
@@ -44,20 +44,20 @@ class DataAccessor:
         self.password = password
         self.db = tornado.database.Connection(self.host, self.dbName, self.user, self.password)
         return
-		
+
     def getAll(self):
         return self.db.query("SELECT * FROM contacts")
 
     def addContact(self, firstName, lastName, phoneNumber):
-        sql = 'insert into contact(firstName,lastName, phoneNumber) values(\'' + repr(firstName) + '\',\'' + repr(lastName) + '\',\'' + repr(phoneNumber) + '\')'  
+        sql = 'insert into contact(firstName,lastName, phoneNumber) values(\'' + repr(firstName) + '\',\'' + repr(lastName) + '\',\'' + repr(phoneNumber) + '\')'
         self.db.quuery(sql)
-        return 
+        return
 
     def removeContact(self,id):
         sql = "delete from contact where id=" + repr(id)
         self.db.query(sql)
         return
-	
+
 class MainHandler(tornado.web.RequestHandler):
     # @tornado.web.authenticated
     def get(self):
@@ -67,34 +67,43 @@ class MainHandler(tornado.web.RequestHandler):
 class GetAllContactsHandler(tornado.web.RequestHandler):
     # @tornado.web.authenticated
     def get(self):
-        self.write("TODO")
+        contacts = DataAccessor.getAll()
+        self.write(json.dumps(contacts))
         return
-		
+
 class delContactHandler(tornado.web.RequestHandler):
     # @tornado.web.authenticated
     def get(self):
-        self.write("TODO")
-        return		
+        contactId = self.get_argument('contactId')
+        DataAccessor.removeContact()
+        contacts = DataAccessor.getAll()
+        self.write(json.dumps(contacts))
 
 class addContactHandler(tornado.web.RequestHandler):
     # @tornado.web.authenticated
-    def get(self):
-        self.write("TODO")
-        return				
-		
+    def post(self):
+        firstName = self.get_argument('firstName', True)
+        lastName = self.get_argument('lastName', True)
+        phoneNumber = self.get_argument('phoneNumber', True)
+        DataAccessor.addContact(firstName, lastName, phoneNumber)
+        contacts = DataAccessor.getAll()
+        self.write(json.dumps(contacts))
+
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/", MainHandler),            
+            (r"/", MainHandler),
+            (r"/contacts/getAll", GetAllContactsHandler),
+            (r"/contacts/delete", addContactHandler),
+            (r"/test1/(?P<contactId>[^\/]+)", delContactHandler),
         ]
         settings = dict(
-            blog_title=u"Tornado Blog",
+            blog_title="Test Tornado",
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             ui_modules={"Entry": EntryModule},
             xsrf_cookies=True,
             cookie_secret="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
-            login_url="/auth/login",
             debug=True,
         )
         tornado.web.Application.__init__(self, handlers, **settings)
