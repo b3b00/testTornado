@@ -1,0 +1,53 @@
+
+.bubbleIn
+{
+/*padding: 0px;*/
+background: #FF3333;
+font-size: 16px;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+padding-right:20px;
+}
+
+.bubbleIn:after 
+{
+content: "";
+font-size: 16px;
+position: absolute;
+bottom: -15px;
+left: 125px;
+border-style: solid;
+border-width: 15px 15px 0;
+border-color: #FF3333 transparent;
+display: block;
+width: 0;
+z-index: 1;
+}
+
+
+.bubbleOut
+{
+padding-left:20px;
+/*padding: 0px;*/
+font-size: 16px;
+background: lightgreen;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+}
+
+.bubbleOut:after 
+{
+content: "";
+font-size: 16px;
+position: absolute;
+bottom: -15px;
+left: 125px;
+border-style: solid;
+border-width: 15px 15px 0;
+border-color: lightgreen transparent;
+display: block;
+width: 0;
+z-index: 1;
+}

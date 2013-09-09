@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html ng-app="contacts">
+  <head>
+    <title>My sails / angular test app</title>
+
+    		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+	
+	<!--<script src="http:/localhost:1337/lib/angular/angular.min.js"></script>
+	<script src="http:/localhost:1337/lib/angular/angular-resource.min.js"></script>-->
+	  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.js"></script>
+    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.5.0.js"></script>
+	<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+	<script src="/js/ng/services.js"></script>
+	<script src="/js/ng/controllers.js"></script>
+	
+    
+		<!--<script src="@routes.Assets.at("javascripts/test.js")"></script>-->
+    <link rel="stylesheet" href="/stylesheets/main.css" />
+	<link rel="stylesheet" href="/stylesheets/bubble.css"/>
+	<!-- <link rel="stylesheet" href="/resources/stylesheets/bootstrap.min.css" />-->
+	<!-- Bring in the socket.io client -->
+    <script type="text/javascript" src="/js/socket.io.js"></script>
+    
+    <!-- then beef it up with some convenience logic for talking to Sails.js -->
+    <script type="text/javascript" src="/js/sails.io.js"></script>
+
+    <!-- listen on socket.io for incoming messages -->
+    <script type="text/javascript" src="/js/app.js"></script>
+	
+
+    
+    <style>
+        body { font-size: 62.5%; }
+        label, input { display:block; }
+        input.text { margin-bottom:12px; width:95%; padding: .4em; }
+        fieldset { padding:0; border:0; margin-top:25px; }
+        h1 { font-size: 1.2em; margin: .6em 0; }
+        div#users-contain { width: 350px; margin: 20px 0; }
+        div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+        div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+        .ui-dialog .ui-state-error { padding: .3em; }
+        .validateTips { border: 1px solid transparent; padding: 0.3em; }
+    </style>
+	
+	
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	
+	<script>
+
+	
+/*
+	//function ContactsCtrl($scope, Contact) {
+function ContactsCtrl($scope,$resource) {
+
+	var contacts = angular.module('contacts', []);
+	
+	 contacts.controller('ContactsCtrl', function($scope,$resource){
+		console.log("in controller [ContactsCtrl]");	
+		// $scope.contacts = Contact.query();  
+		res = $resource('/contacts/getAll', {}, {
+						query: {method:'GET', params:{}, isArray:true}
+							});
+		$scope.contacts = res.query();
+		});
+ 
+ 
+ //$scope.contacts=[{firstName:'toto',lastName:'tata',phoneNumber:'123456789',id:'1'}]
+  console.log("out of controller [ContactsCtrl]");
+}*/
+	</script>
+	
+	
+  </head>
+
+  <body>
+    <br><br>
+
+<div ng-controller="ContactsCtrl">
+
+<script>
+    $(function() {
+		var name = $( "#name" ),
+		email = $( "#email" ),
+		password = $( "#password" ),
+		allFields = $( [] ).add( name ).add( email ).add( password ),
+		tips = $( ".validateTips" );
+
+		$( "#dialog-form" ).dialog({
+			autoOpen: false,
+			height: 300,
+			width: 350,
+			modal: true,
+			buttons: {
+			"Add a contact": function() {
+				var scope = angular.element($("#outer"));
+				scope.addContact($("#contact-form").serialize());
+				
+				scope.$apply(function(){
+					scope.addContact($("#contact-form").serialize());
+				})
+				
+				
+				allFields.removeClass( "ui-state-error" );
+				$( this ).dialog( "close" );
+			},
+			
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+			},
+			
+			close: function() {
+				allFields.val( "" ).removeClass( "ui-state-error" );
+			}
+		});
+
+		$( "#create-user" )
+		.button()
+		.click(function() {
+			$( "#dialog-form" ).dialog( "open" );	
+		});
+
+    });
+
+
+
+
+</script>
+
+
+
+
+<table border="1" style="border-color:black; border-collapse:collapse; border-bottom:black 1px solid" ng-controller="ContactsCtrl">
+    <thead><tr><td>first name</td><td>last name</td><td>phone number</td></tr></thead>
+		
+    <tbody id="contactsTable">
+		<tr ng-repeat="contact in contacts">
+			<td>{{contact.firstName}}</td>
+			<td>{{contact.lastName}}</td>
+			<td>{{contact.phoneNumber}}</td>
+			<td><button ng-click="$parent.rmContact(contact.id)" 
+						style="background:white; cursor:pointer; border:solid 0px white;" 
+						type="button">
+					<img ng-click="rmContact('{{contact.id}}')" onmouseover="this.style.cursor='pointer'" onmouseout="this.style.cursor='default'" src="/images/del.png">
+			</td>
+		</tr>	
+    </tbody>
+
+</table>   
+             
+<br>
+<br>
+	
+<button class="btn btn-primary" ng-click="openDialog()">Add Contact</button>	
+    
+</div>
+
+
+
+    <!-- A few key dependencies, linked in order -->
+	<br><br>
+	<a href="/contacts/list">Contacts</a>&nbsp; &nbsp;&nbsp;
+	<a href="/websock/demo">WebSocket</a>&nbsp; &nbsp;&nbsp;
+	<a href="/main/index">Chat!</a>
+
+    </body>
+
+</html>
+

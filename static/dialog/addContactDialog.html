@@ -1,0 +1,14 @@
+<div class="modal-header">    
+	<h3>New Contact</h3>    
+</div>    
+<div class="modal-body">    
+	<p>firstName: <input ng-model="first" /></p>    
+	<p>lastName: <input ng-model="last" /></p>    
+	<p>phoneNumber: <input ng-model="phone" /></p>    	
+</div>    
+
+<div class="modal-footer">    
+	
+	<button ng-click="closeDlg(first,last,phone)" class="btn btn-primary" >OK</button>    
+	<button ng-click="cancelDlg()" class="btn btn-primary" >Cancel</button>    
+</div>
